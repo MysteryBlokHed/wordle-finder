@@ -10,11 +10,13 @@
 
   let creating = false
   let methodName: Method = 'Normal'
-  let method: SeedMethod
+  let method: SeedMethod = METHODS[methodName]
   let newName = ''
   let newList = ''
   let knownWord = ''
   let newDate = new Date()
+
+  $: method = METHODS[methodName]
 
   const maxDate = new Date(`${new Date().getFullYear() + 10}-02-01`)
 
