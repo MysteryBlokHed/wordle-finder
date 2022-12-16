@@ -11,6 +11,23 @@ const METHODS = {
     },
   },
 
+  Wordle: {
+    requiresWord: false,
+
+    method(date) {
+      const formattedDate = `${date.getFullYear()}-${
+        date.getMonth() + 1
+      }-${date.getDate()}`
+
+      return fetch(
+        `https://cors-proxy.mysteryblokhed.workers.dev/https:%2F%2Fwww.nytimes.com/svc/wordle/v2/${formattedDate}.json`,
+      )
+        .then(r => r.json())
+        .then(json => json.solution)
+        .catch(() => null)
+    },
+  },
+
   Louan: {
     requiresWord: false,
 
