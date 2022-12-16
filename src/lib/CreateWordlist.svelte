@@ -19,6 +19,10 @@
   let knownWord = ''
   let newDate = new Date()
 
+  let newNameInvalid = false
+  let newListInvalid = false
+  let knownWordInvalid = false
+
   newDate.setDate(newDate.getUTCDate())
 
   $: method = METHODS[methodName]
@@ -31,10 +35,23 @@
   // newDate.setDate(newDate.getUTCDate())
 
   const save = () => {
-    // Parse list and ensure it's an array
-    if (method.requiresWord && !method.requiresList)
-      throw new TypeError('Method must require list to require word')
+    // Make sure the name is not empty
+    if (!newName.trim().length) {
+      newNameInvalid = true
+      snackbarLabel = 'Name cannot be empty'
+      snackbar.open()
+      throw new TypeError('Name cannot be empty')
+    } else {
+      newNameInvalid = false
+    }
 
+    if (method.requiresWord && !method.requiresList) {
+      snackbarLabel = '(Internal Error)'
+      snackbar.open()
+      throw new TypeError('Method must require list to require word')
+    }
+
+    // Parse list and ensure it's an array
     let listParsed: string[] = []
     if (method.requiresList) {
       try {
@@ -43,10 +60,12 @@
         if (!Array.isArray(listParsed))
           throw new TypeError('Invalid list provided')
       } catch {
+        newListInvalid = true
         snackbarLabel = 'Invalid list provided'
         snackbar.open()
         throw new TypeError('Invalid list provided')
       }
+      newListInvalid = false
     }
 
     let offset = -1
@@ -57,9 +76,12 @@
       )
 
       if (wordIndex === -1) {
+        knownWordInvalid = true
         snackbarLabel = 'Provided word not in list'
         snackbar.open()
         throw new TypeError('Provided word not in list')
+      } else {
+        knownWordInvalid = true
       }
 
       // Calculate index offset
@@ -100,7 +122,11 @@
 </Button>
 {#if creating}
   <br />
-  <Textfield bind:value={newName} label="Wordlist Name" />
+  <Textfield
+    bind:value={newName}
+    bind:invalid={newNameInvalid}
+    label="Wordlist Name"
+  />
   <br />
   <Select bind:value={methodName} label="Word Method">
     {#each Object.keys(METHODS) as method}
@@ -120,12 +146,20 @@
 
   {#if method.requiresList}
     <br />
-    <Textfield bind:value={newList} label="Wordlist (Raw JS Array)" />
+    <Textfield
+      bind:value={newList}
+      bind:invalid={newListInvalid}
+      label="Wordlist (Raw JS Array)"
+    />
   {/if}
 
   {#if method.requiresWord}
     <br />
-    <Textfield bind:value={knownWord} label="Known Word" />
+    <Textfield
+      bind:value={knownWord}
+      bind:invalid={knownWordInvalid}
+      label="Known Word"
+    />
     <br />
     <span>Day of word:</span>
     <br />
