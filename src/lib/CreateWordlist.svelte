@@ -68,7 +68,7 @@
   <br />
   <Textfield bind:value={newList} label="Wordlist (Raw JS Array)" />
   <br />
-  <Select bind:value={methodName}>
+  <Select bind:value={methodName} label="Word Method">
     {#each Object.keys(METHODS) as method}
       <Option value={method}>{method}</Option>
     {/each}

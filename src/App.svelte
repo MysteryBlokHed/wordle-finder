@@ -1,6 +1,7 @@
 <script lang="ts">
   import Wordlists from './lib/Wordlists.svelte'
   import CreateWordlist from './lib/CreateWordlist.svelte'
+  import HelpModal from './lib/HelpModal.svelte'
 </script>
 
 <main>
@@ -16,4 +17,6 @@
   <br />
   <br />
   <CreateWordlist />
+  <br />
+  <HelpModal />
 </main>
