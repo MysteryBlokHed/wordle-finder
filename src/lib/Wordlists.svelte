@@ -1,5 +1,5 @@
 <script lang="ts">
-  import Button, { Label } from '@smui/button'
+  import Button, { Icon, Label } from '@smui/button'
   import Checkbox from '@smui/checkbox'
   import DataTable, { Head, Body, Row, Cell } from '@smui/data-table'
   import { DatePicker } from 'date-picker-svelte'
@@ -49,6 +49,7 @@
 
 <Button on:click={() => (pickerShown = !pickerShown)} variant="raised">
   <Label>Select Date For Word</Label>
+  <Icon class="material-icons">event</Icon>
 </Button>
 {#if pickerShown}
   <br />
@@ -95,5 +96,6 @@
       Delete {selected.length}
       {selected.length === 1 ? 'list' : 'lists'}
     </Label>
+    <Icon class="material-icons">delete</Icon>
   </Button>
 {/if}

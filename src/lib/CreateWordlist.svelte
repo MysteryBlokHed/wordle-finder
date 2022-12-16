@@ -1,5 +1,5 @@
 <script lang="ts">
-  import Button, { Label } from '@smui/button'
+  import Button, { Icon, Label } from '@smui/button'
   import Select, { Option } from '@smui/select'
   import Textfield from '@smui/textfield'
   import { DatePicker } from 'date-picker-svelte'
@@ -61,7 +61,8 @@
 </script>
 
 <Button on:click={() => (creating = !creating)} variant="raised">
-  Add Wordlist
+  <Label>Add Wordlist</Label>
+  <Icon class="material-icons">add_circle</Icon>
 </Button>
 {#if creating}
   <br />
@@ -90,6 +91,7 @@
   <br />
   <Button on:click={save} variant="raised">
     <Label>Save</Label>
+    <Icon class="material-icons">save</Icon>
   </Button>
 {/if}
 <div />
