@@ -18,26 +18,52 @@
 
   listsStore.subscribe(value => (lists = value))
 
-  const findCurrentWord = (date: Date, list: List): string => {
+  const findCurrentWord = async (date: Date, list: List): Promise<string> => {
     if (!(list.method in METHODS))
       throw new TypeError(`Unknown method ${list.method} specified`)
 
-    const index = METHODS[list.method].method(date, list)
-    if (!(index in list.list)) return '(Not Found)'
+    const indexOrWord = await METHODS[list.method].method(date, list)
+    if (indexOrWord === null) return 'Not Found'
 
-    return list.list[index].toUpperCase()
+    if (typeof indexOrWord === 'number') {
+      if (!(indexOrWord in list.list)) return 'Not Found'
+      return list.list[indexOrWord].toUpperCase()
+    } else {
+      return indexOrWord
+    }
   }
 
-  let options: Array<{ name: string; word: string }>
-  $: options = Object.entries(lists)
-    // Make sure options are in alphabetical order
-    .sort(([a], [b]) => (a > b ? 1 : -1))
-    .map(([key, value]) => ({
-      name: key,
-      word: findCurrentWord(wordDate, value),
-    }))
+  type Option = { name: string; word: string }
 
-  let selected = []
+  let options: Option[]
+  let optionPromises: Array<Promise<Option>>
+
+  $: {
+    // Set options to "Getting word..." by default
+    options = Object.keys(lists)
+      // Make sure options are in alphabetical order
+      .sort()
+      .map(key => ({
+        name: key,
+        word: 'Getting Word...',
+      }))
+
+    // Get the word for each wordlist
+    // This is set up so that any asynchronous getters won't block the others from being displayed;
+    // each word will show up as soon as it's ready
+    // Side note: I absolutely love that this worked first try with Svelte without needing to do any hacks <3
+    Object.entries(lists)
+      // Make sure options are in alphabetical order
+      .sort(([a], [b]) => (a > b ? 1 : -1))
+      .forEach(async ([name, list], i) => {
+        const word = await findCurrentWord(wordDate, list).then(word =>
+          word.toUpperCase(),
+        )
+        options[i] = { name, word }
+      })
+  }
+
+  let selected: Option[] = []
 
   const deleteSelected = () => {
     for (const option of selected) {

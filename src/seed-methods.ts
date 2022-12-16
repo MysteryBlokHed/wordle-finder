@@ -5,6 +5,7 @@ import type { SeedMethod } from './types'
 const METHODS = {
   Normal: {
     requiresWord: true,
+
     method(date, list) {
       return Math.floor(date.getTime() / 8.64e7) - list.offset
     },
@@ -12,6 +13,7 @@ const METHODS = {
 
   Louan: {
     requiresWord: false,
+
     method(date, list) {
       const formattedDate = `${date.getFullYear()}-${
         date.getMonth() + 1
