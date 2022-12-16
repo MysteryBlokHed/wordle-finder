@@ -14,8 +14,8 @@
   -moz-osx-font-smoothing: grayscale;
   -webkit-text-size-adjust: 100%;
 
-  --date-picker-background: #1b1e27;
-  --date-picker-foreground: #f7f7f7;
+  --date-picker-background: rgba(0, 0, 0, 0.12);
+  --date-picker-foreground: rgba(255, 255, 255, 0.87);
 }
 
 a {
@@ -75,12 +75,14 @@ button:focus-visible {
     color: #213547;
     background-color: #ffffff;
 
-    --date-picker-background: black;
-    --date-picker-foreground: white;
+    --date-picker-background: white;
+    --date-picker-foreground: black;
   }
+
   a:hover {
     color: #747bff;
   }
+
   button {
     background-color: #f9f9f9;
   }

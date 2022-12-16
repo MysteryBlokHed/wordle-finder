@@ -1,5 +1,5 @@
 <script lang="ts">
-  import Button from '@smui/button'
+  import Button, { Label } from '@smui/button'
   import Select, { Option } from '@smui/select'
   import Textfield from '@smui/textfield'
   import { DatePicker } from 'date-picker-svelte'
@@ -86,6 +86,9 @@
     />
   {/if}
   <br />
-  <Button on:click={save} variant="raised">Save</Button>
+  <br />
+  <Button on:click={save} variant="raised">
+    <Label>Save</Label>
+  </Button>
 {/if}
 <div />
