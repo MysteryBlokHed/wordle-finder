@@ -1,8 +1,10 @@
 {
   "name": "wordle-finder",
+  "description": "A site allowing you to add generic wordlists for Wordle-like games and find the solution for a given date.",
   "private": true,
   "version": "0.1.0",
   "type": "module",
+  "license": "AGPL-3.0",
   "scripts": {
     "dev": "vite",
     "build": "vite build --outDir public",
