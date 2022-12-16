@@ -12,6 +12,7 @@ cache:
     - .yarn-cache/
     - .cache/
     - public/
+    - smui/
 
 .changes: &changes
   - src/**/*

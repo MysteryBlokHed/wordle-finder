@@ -45,6 +45,7 @@
       One site that has its method included is a French wordle clone, <a
         href="https://wordle.louan.me/"
         target="_blank"
+        rel="noreferrer"
       >
         wordle.louan.me.
       </a>
