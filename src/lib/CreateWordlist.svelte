@@ -1,6 +1,8 @@
 <script lang="ts">
   import Button, { Icon, Label } from '@smui/button'
+  import IconButton from '@smui/icon-button'
   import Select, { Option } from '@smui/select'
+  import Snackbar, { Actions } from '@smui/snackbar'
   import Textfield from '@smui/textfield'
   import { DatePicker } from 'date-picker-svelte'
 
@@ -18,14 +20,26 @@
 
   $: method = METHODS[methodName]
 
+  let snackbar: Snackbar
+  let snackbarLabel: string
+
   const maxDate = new Date(`${new Date().getFullYear() + 10}-02-01`)
 
   // newDate.setDate(newDate.getUTCDate())
 
   const save = () => {
     // Parse list and ensure it's an array
-    const listParsed: string[] = JSON.parse(newList.replaceAll("'", '"'))
-    if (!Array.isArray(listParsed)) throw new TypeError('Invalid list provided')
+    let listParsed: string[]
+    try {
+      listParsed = JSON.parse(newList.replaceAll("'", '"'))
+
+      if (!Array.isArray(listParsed))
+        throw new TypeError('Invalid list provided')
+    } catch {
+      snackbarLabel = 'Invalid list provided'
+      snackbar.open()
+      throw new TypeError('Invalid list provided')
+    }
 
     let offset = -1
 
@@ -34,7 +48,11 @@
         word => word.toLowerCase() === knownWord.toLowerCase(),
       )
 
-      if (wordIndex === -1) throw new TypeError('Provided word not in list')
+      if (wordIndex === -1) {
+        snackbarLabel = 'Provided word not in list'
+        snackbar.open()
+        throw new TypeError('Provided word not in list')
+      }
 
       // Calculate index offset
       // const tzOffset = newDate.getTimezoneOffset() * 60000
@@ -59,6 +77,13 @@
     newDate = new Date()
   }
 </script>
+
+<Snackbar bind:this={snackbar} labelText={snackbarLabel}>
+  <Label />
+  <Actions>
+    <IconButton class="material-icons" title="Dismiss">close</IconButton>
+  </Actions>
+</Snackbar>
 
 <Button on:click={() => (creating = !creating)} variant="raised">
   <Label>Add Wordlist</Label>

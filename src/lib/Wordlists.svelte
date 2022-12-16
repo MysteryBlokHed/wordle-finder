@@ -29,10 +29,14 @@
   }
 
   let options: Array<{ name: string; word: string }>
-  $: options = Object.entries(lists).map(([key, value]) => ({
-    name: key,
-    word: findCurrentWord(wordDate, value),
-  }))
+  $: options = Object.entries(lists)
+    // Make sure options are in alphabetical order
+    .sort(([a], [b]) => (a > b ? 1 : -1))
+    .map(([key, value]) => ({
+      name: key,
+      word: findCurrentWord(wordDate, value),
+    }))
+
   let selected = []
 
   const deleteSelected = () => {
