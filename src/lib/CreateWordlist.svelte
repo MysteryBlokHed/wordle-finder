@@ -55,6 +55,7 @@
     creating = false
     newName = ''
     newList = ''
+    knownWord = ''
     newDate = new Date()
   }
 </script>
