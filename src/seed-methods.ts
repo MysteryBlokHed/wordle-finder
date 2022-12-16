@@ -1,18 +1,22 @@
 import seedrandom from 'seedrandom'
 
-import type { SeedMethod } from './types'
+import type { List, SeedMethod } from './types'
 
 const METHODS = {
   Normal: {
     requiresWord: true,
+    requiresList: true,
+    external: false,
 
-    method(date, list) {
+    method(date, list: List) {
       return Math.floor(date.getTime() / 8.64e7) - list.offset
     },
   },
 
   Wordle: {
     requiresWord: false,
+    requiresList: false,
+    external: true,
 
     method(date) {
       const formattedDate = `${date.getFullYear()}-${
@@ -30,8 +34,10 @@ const METHODS = {
 
   Louan: {
     requiresWord: false,
+    requiresList: true,
+    external: false,
 
-    method(date, list) {
+    method(date, list: List) {
       const formattedDate = `${date.getFullYear()}-${
         date.getMonth() + 1
       }-${date.getDate()}`

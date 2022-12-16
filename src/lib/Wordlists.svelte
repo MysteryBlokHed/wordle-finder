@@ -12,9 +12,9 @@
   let wordDate = new Date()
   let pickerShown = false
 
-  const maxDate = new Date(`${new Date().getFullYear() + 10}-02-01`)
-
   wordDate.setDate(wordDate.getUTCDate())
+
+  const maxDate = new Date(`${new Date().getFullYear() + 10}-02-01`)
 
   listsStore.subscribe(value => (lists = value))
 

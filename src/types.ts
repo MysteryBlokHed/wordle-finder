@@ -11,8 +11,11 @@ export interface List {
 
 export interface SeedMethod {
   requiresWord: boolean
+  requiresList: boolean
+  external: boolean
+
   method(
     date: Date,
-    list: List,
+    list?: List,
   ): string | number | null | Promise<string | number | null>
 }

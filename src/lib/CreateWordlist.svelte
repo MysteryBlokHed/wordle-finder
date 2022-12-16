@@ -1,6 +1,7 @@
 <script lang="ts">
   import Button, { Icon, Label } from '@smui/button'
   import IconButton from '@smui/icon-button'
+  import Paper, { Title, Content } from '@smui/paper'
   import Select, { Option } from '@smui/select'
   import Snackbar, { Actions } from '@smui/snackbar'
   import Textfield from '@smui/textfield'
@@ -18,6 +19,8 @@
   let knownWord = ''
   let newDate = new Date()
 
+  newDate.setDate(newDate.getUTCDate())
+
   $: method = METHODS[methodName]
 
   let snackbar: Snackbar
@@ -29,16 +32,21 @@
 
   const save = () => {
     // Parse list and ensure it's an array
-    let listParsed: string[]
-    try {
-      listParsed = JSON.parse(newList.replaceAll("'", '"'))
+    if (method.requiresWord && !method.requiresList)
+      throw new TypeError('Method must require list to require word')
 
-      if (!Array.isArray(listParsed))
+    let listParsed: string[] = []
+    if (method.requiresList) {
+      try {
+        listParsed = JSON.parse(newList.replaceAll("'", '"'))
+
+        if (!Array.isArray(listParsed))
+          throw new TypeError('Invalid list provided')
+      } catch {
+        snackbarLabel = 'Invalid list provided'
+        snackbar.open()
         throw new TypeError('Invalid list provided')
-    } catch {
-      snackbarLabel = 'Invalid list provided'
-      snackbar.open()
-      throw new TypeError('Invalid list provided')
+      }
     }
 
     let offset = -1
@@ -75,6 +83,7 @@
     newList = ''
     knownWord = ''
     newDate = new Date()
+    newDate.setDate(newDate.getUTCDate())
   }
 </script>
 
@@ -93,13 +102,27 @@
   <br />
   <Textfield bind:value={newName} label="Wordlist Name" />
   <br />
-  <Textfield bind:value={newList} label="Wordlist (Raw JS Array)" />
-  <br />
   <Select bind:value={methodName} label="Word Method">
     {#each Object.keys(METHODS) as method}
       <Option value={method}>{method}</Option>
     {/each}
   </Select>
+
+  {#if method.external}
+    <br />
+    <Paper>
+      <Title>Note</Title>
+      <Content>
+        This method will use external sites to retrieve the word.
+      </Content>
+    </Paper>
+  {/if}
+
+  {#if method.requiresList}
+    <br />
+    <Textfield bind:value={newList} label="Wordlist (Raw JS Array)" />
+  {/if}
+
   {#if method.requiresWord}
     <br />
     <Textfield bind:value={knownWord} label="Known Word" />
@@ -112,7 +135,8 @@
       max={maxDate}
     />
   {/if}
-  <br />
+
+  {#if method.requiresList || method.requiresWord} <br /> {/if}
   <br />
   <Button on:click={save} variant="raised">
     <Label>Save</Label>
