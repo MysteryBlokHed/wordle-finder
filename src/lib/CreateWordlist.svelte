@@ -23,16 +23,13 @@
   let newListInvalid = false
   let knownWordInvalid = false
 
-  newDate.setDate(newDate.getUTCDate())
-
   $: method = METHODS[methodName]
 
   let snackbar: Snackbar
   let snackbarLabel: string
 
-  const maxDate = new Date(`${new Date().getFullYear() + 10}-02-01`)
-
-  // newDate.setDate(newDate.getUTCDate())
+  const maxDate = new Date()
+  maxDate.setFullYear(maxDate.getFullYear() + 10)
 
   const save = () => {
     // Make sure the name is not empty

@@ -7,7 +7,6 @@
 <main>
   <h1>Wordle Finder</h1>
   <h2>Find the current word for any given wordlist</h2>
-  <h3>Dates are in UTC!</h3>
   <Wordlists />
   <br />
   <br />

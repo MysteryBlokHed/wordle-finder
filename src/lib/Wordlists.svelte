@@ -2,6 +2,7 @@
   import Button, { Icon, Label } from '@smui/button'
   import Checkbox from '@smui/checkbox'
   import DataTable, { Head, Body, Row, Cell } from '@smui/data-table'
+  import Textfield from '@smui/textfield'
   import { DatePicker } from 'date-picker-svelte'
   import METHODS from '../seed-methods'
 
@@ -10,11 +11,38 @@
 
   let lists: Record<string, List> = {}
   let wordDate = new Date()
+  let wordTime = `${wordDate.getHours()}:${wordDate
+    .getMinutes()
+    .toString()
+    .padStart(2, '0')}`
+  let wordTimeInvalid = false
   let pickerShown = false
 
-  wordDate.setDate(wordDate.getUTCDate())
+  const timeRegex = /^(1?\d|2[0-3]):([0-5]\d)$/
 
-  const maxDate = new Date(`${new Date().getFullYear() + 10}-02-01`)
+  $: (() => {
+    // Try to parse the provided time
+    const match = wordTime.match(timeRegex)
+
+    if (!match) {
+      wordTimeInvalid = true
+      return
+    } else {
+      wordTimeInvalid = false
+    }
+
+    const hours = parseInt(match[1])
+    const minutes = parseInt(match[2])
+
+    wordDate.setHours(hours)
+    wordDate.setMinutes(minutes)
+
+    // Invalidate to update words
+    wordDate = wordDate
+  })()
+
+  const maxDate = new Date()
+  maxDate.setFullYear(maxDate.getFullYear() + 10)
 
   listsStore.subscribe(value => (lists = value))
 
@@ -82,7 +110,12 @@
   <Icon class="material-icons">event</Icon>
 </Button>
 {#if pickerShown}
-  <br />
+  <h4>Remember to update the time as well!</h4>
+  <Textfield
+    bind:value={wordTime}
+    bind:invalid={wordTimeInvalid}
+    label="Time (HH:MM, 24-hour clock)"
+  />
   <br />
   <DatePicker
     bind:value={wordDate}

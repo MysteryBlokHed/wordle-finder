@@ -19,6 +19,7 @@ const METHODS = {
     external: true,
 
     method(date) {
+      // Wordle uses the local timezone, not UTC
       const formattedDate = `${date.getFullYear()}-${
         date.getMonth() + 1
       }-${date.getDate()}`
@@ -38,9 +39,10 @@ const METHODS = {
     external: false,
 
     method(date, list: List) {
-      const formattedDate = `${date.getFullYear()}-${
-        date.getMonth() + 1
-      }-${date.getDate()}`
+      // Wordle uses UTC, not the local timezone
+      const formattedDate = `${date.getUTCFullYear()}-${
+        date.getUTCMonth() + 1
+      }-${date.getUTCDate()}`
       const random = seedrandom(formattedDate)()
       const index = Math.floor(random * (list.list.indexOf('PIZZA') + 1))
 
