@@ -1,4 +1,4 @@
-import type { Method } from './seed-methods'
+import type { Method } from './index-methods'
 
 export const LIST_TIMEZONES = ['UTC', 'Local'] as const
 
@@ -15,7 +15,7 @@ export interface List {
   timezone: ListTimezone
 }
 
-export interface SeedMethod {
+export interface IndexMethod {
   requiresTimezone: boolean
   requiresWord: boolean
   requiresList: boolean

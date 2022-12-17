@@ -7,14 +7,14 @@
   import Textfield from '@smui/textfield'
   import { DatePicker } from 'date-picker-svelte'
 
-  import METHODS, { type Method } from '../seed-methods'
+  import METHODS, { type Method } from '../index-methods'
   import { lists as listsStore } from '../stores'
   import { LIST_TIMEZONES } from '../types'
-  import type { ListTimezone, SeedMethod } from '../types'
+  import type { ListTimezone, IndexMethod } from '../types'
 
   let creating = false
   let methodName: Method = 'Normal'
-  let method: SeedMethod = METHODS[methodName]
+  let method: IndexMethod = METHODS[methodName]
   let newName = ''
   let newTimezone: ListTimezone = 'UTC'
   let newList = ''

@@ -1,6 +1,6 @@
 import seedrandom from 'seedrandom'
 
-import type { List, SeedMethod } from './types'
+import type { List, IndexMethod } from './types'
 
 const METHODS = {
   Normal: {
@@ -44,7 +44,7 @@ const METHODS = {
     external: false,
 
     method(date, list: List) {
-      // Wordle uses UTC, not the local timezone
+      // Louan uses UTC, not the local timezone
       const formattedDate = `${date.getUTCFullYear()}-${
         date.getUTCMonth() + 1
       }-${date.getUTCDate()}`
@@ -54,7 +54,7 @@ const METHODS = {
       return index
     },
   },
-} as const satisfies Record<string, SeedMethod>
+} as const satisfies Record<string, IndexMethod>
 
 export type Method = keyof typeof METHODS
 

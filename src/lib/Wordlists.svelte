@@ -4,7 +4,7 @@
   import DataTable, { Head, Body, Row, Cell } from '@smui/data-table'
   import Textfield from '@smui/textfield'
   import { DatePicker } from 'date-picker-svelte'
-  import METHODS from '../seed-methods'
+  import METHODS from '../index-methods'
 
   import { lists as listsStore } from '../stores'
   import type { List } from '../types'
