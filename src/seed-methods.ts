@@ -4,16 +4,20 @@ import type { List, SeedMethod } from './types'
 
 const METHODS = {
   Normal: {
+    requiresTimezone: true,
     requiresWord: true,
     requiresList: true,
     external: false,
 
     method(date, list: List) {
-      return Math.floor(date.getTime() / 8.64e7) - list.offset
+      const tzOffset =
+        list.timezone === 'UTC' ? 0 : date.getTimezoneOffset() * 60_000
+      return Math.floor((date.getTime() - tzOffset) / 8.64e7) - list.offset
     },
   },
 
   Wordle: {
+    requiresTimezone: false,
     requiresWord: false,
     requiresList: false,
     external: true,
@@ -34,6 +38,7 @@ const METHODS = {
   },
 
   Louan: {
+    requiresTimezone: false,
     requiresWord: false,
     requiresList: true,
     external: false,

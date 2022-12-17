@@ -1,5 +1,9 @@
 import type { Method } from './seed-methods'
 
+export const LIST_TIMEZONES = ['UTC', 'Local'] as const
+
+export type ListTimezone = typeof LIST_TIMEZONES[number]
+
 export interface List {
   /** The wordlist itself */
   list: string[]
@@ -7,9 +11,12 @@ export interface List {
   offset: number
   /** The name of the method used to find the word index */
   method: Method
+  /** The timezone for the reset */
+  timezone: ListTimezone
 }
 
 export interface SeedMethod {
+  requiresTimezone: boolean
   requiresWord: boolean
   requiresList: boolean
   external: boolean

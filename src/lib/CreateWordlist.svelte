@@ -9,12 +9,14 @@
 
   import METHODS, { type Method } from '../seed-methods'
   import { lists as listsStore } from '../stores'
-  import type { SeedMethod } from '../types'
+  import { LIST_TIMEZONES } from '../types'
+  import type { ListTimezone, SeedMethod } from '../types'
 
   let creating = false
   let methodName: Method = 'Normal'
   let method: SeedMethod = METHODS[methodName]
   let newName = ''
+  let newTimezone: ListTimezone = 'UTC'
   let newList = ''
   let knownWord = ''
   let newDate = new Date()
@@ -82,8 +84,9 @@
       }
 
       // Calculate index offset
-      // const tzOffset = newDate.getTimezoneOffset() * 60000
-      offset = Math.floor(newDate.getTime() / 8.64e7) - wordIndex
+      const tzOffset =
+        newTimezone === 'UTC' ? 0 : newDate.getTimezoneOffset() * 60_000
+      offset = Math.floor((newDate.getTime() - tzOffset) / 8.64e7) - wordIndex
     }
 
     // Update known lists
@@ -93,6 +96,7 @@
         list: listParsed,
         offset: offset,
         method: methodName,
+        timezone: newTimezone,
       },
     }))
 
@@ -139,6 +143,15 @@
         This method will use external sites to retrieve the word.
       </Content>
     </Paper>
+  {/if}
+
+  {#if method.requiresTimezone}
+    <br />
+    <Select bind:value={newTimezone}>
+      {#each LIST_TIMEZONES as timezone}
+        <Option value={timezone}>{timezone}</Option>
+      {/each}
+    </Select>
   {/if}
 
   {#if method.requiresList}
