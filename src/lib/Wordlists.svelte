@@ -7,16 +7,25 @@
   import METHODS from '../index-methods'
 
   import { lists as listsStore } from '../stores'
-  import type { List } from '../types'
+  import type { List, ListTimezone } from '../types'
 
   let lists: Record<string, List> = {}
   let wordDate = new Date()
+  let today = new Date()
   let wordTime = `${wordDate.getHours()}:${wordDate
     .getMinutes()
     .toString()
     .padStart(2, '0')}`
   let wordTimeInvalid = false
   let pickerShown = false
+
+  setTimeout(
+    () =>
+      setInterval(() => {
+        today = new Date()
+      }, 1000),
+    1000 - today.getMilliseconds(),
+  )
 
   const timeRegex = /^(1?\d|2[0-3]):([0-5]\d)$/
 
@@ -61,18 +70,19 @@
     }
   }
 
-  type Option = { name: string; word: string }
+  type Option = { name: string; word: string; timezone: ListTimezone }
 
   let options: Option[]
 
   $: {
     // Set options to "Getting word..." by default
-    options = Object.keys(lists)
+    options = Object.entries(lists)
       // Make sure options are in alphabetical order
       .sort()
-      .map(key => ({
+      .map(([key, value]) => ({
         name: key,
         word: 'Getting Word...',
+        timezone: value.timezone,
       }))
 
     // Get the word for each wordlist
@@ -86,7 +96,7 @@
         const word = await findCurrentWord(wordDate, list).then(word =>
           word.toUpperCase(),
         )
-        options[i] = { name, word }
+        options[i] = { name, word, timezone: list.timezone }
       })
   }
 
@@ -99,6 +109,26 @@
     }
     selected.length = 0
     listsStore.set(lists)
+  }
+
+  const nextWord = (timezone: ListTimezone, today: Date): string => {
+    const tomorrow = new Date()
+
+    if (timezone === 'Local') {
+      tomorrow.setHours(24, 0, 0, 0)
+    } else {
+      tomorrow.setUTCHours(24, 0, 0, 0)
+    }
+
+    const deltaMs = tomorrow.getTime() - today.getTime()
+    const totalSeconds = Math.floor(deltaMs / 1000)
+    const hours = Math.floor(totalSeconds / 3600)
+    const minutes = Math.floor((totalSeconds - hours * 3600) / 60)
+      .toString()
+      .padStart(2, '0')
+    const seconds = (totalSeconds % 60).toString().padStart(2, '0')
+
+    return `${hours}:${minutes}:${seconds}`
   }
 </script>
 
@@ -130,6 +160,8 @@
       </Cell>
       <Cell>List Name</Cell>
       <Cell>Word</Cell>
+      <Cell>Timezone</Cell>
+      <Cell>Next Reset</Cell>
     </Row>
   </Head>
   <Body>
@@ -145,6 +177,8 @@
         </Cell>
         <Cell>{option.name}</Cell>
         <Cell>{option.word}</Cell>
+        <Cell>{option.timezone}</Cell>
+        <Cell>{nextWord(option.timezone, today)}</Cell>
       </Row>
     {/each}
   </Body>
