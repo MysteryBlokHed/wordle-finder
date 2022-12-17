@@ -64,7 +64,6 @@
   type Option = { name: string; word: string }
 
   let options: Option[]
-  let optionPromises: Array<Promise<Option>>
 
   $: {
     // Set options to "Getting word..." by default
@@ -101,8 +100,6 @@
     selected.length = 0
     listsStore.set(lists)
   }
-
-  window.lists = lists
 </script>
 
 <Button on:click={() => (pickerShown = !pickerShown)} variant="raised">
