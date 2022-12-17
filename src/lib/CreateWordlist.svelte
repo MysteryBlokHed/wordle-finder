@@ -78,7 +78,7 @@
         snackbar.open()
         throw new TypeError('Provided word not in list')
       } else {
-        knownWordInvalid = true
+        knownWordInvalid = false
       }
 
       // Calculate index offset
@@ -98,11 +98,11 @@
 
     // Reset values
     creating = false
+    methodName = 'Normal'
     newName = ''
     newList = ''
     knownWord = ''
     newDate = new Date()
-    newDate.setDate(newDate.getUTCDate())
   }
 </script>
 
