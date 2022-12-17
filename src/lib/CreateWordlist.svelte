@@ -89,6 +89,15 @@
       offset = Math.floor((newDate.getTime() - tzOffset) / 8.64e7) - wordIndex
     }
 
+    switch (methodName) {
+      case 'Wordle':
+        newTimezone = 'Local'
+        break
+      case 'Louan':
+        newTimezone = 'UTC'
+        break
+    }
+
     // Update known lists
     listsStore.update(lists => ({
       ...lists,
@@ -104,6 +113,7 @@
     creating = false
     methodName = 'Normal'
     newName = ''
+    newTimezone = 'UTC'
     newList = ''
     knownWord = ''
     newDate = new Date()
