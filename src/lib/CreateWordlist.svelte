@@ -157,7 +157,7 @@
 
   {#if method.requiresTimezone}
     <br />
-    <Select bind:value={newTimezone}>
+    <Select bind:value={newTimezone} label="Timezone">
       {#each LIST_TIMEZONES as timezone}
         <Option value={timezone}>{timezone}</Option>
       {/each}
