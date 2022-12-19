@@ -12,6 +12,8 @@
   import { LIST_TIMEZONES } from '../types'
   import type { ListTimezone, IndexMethod } from '../types'
 
+  import '../theme/snackbar.scss'
+
   let creating = false
   let methodName: Method = 'Normal'
   let method: IndexMethod = METHODS[methodName]
@@ -120,7 +122,7 @@
   }
 </script>
 
-<Snackbar bind:this={snackbar} labelText={snackbarLabel}>
+<Snackbar bind:this={snackbar} labelText={snackbarLabel} class="error">
   <Label />
   <Actions>
     <IconButton class="material-icons" title="Dismiss">close</IconButton>
