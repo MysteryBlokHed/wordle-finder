@@ -27,6 +27,10 @@
   let newListInvalid = false
   let knownWordInvalid = false
 
+  $: newName, (newNameInvalid = false)
+  $: newList, (newListInvalid = false)
+  $: knownWord, (knownWordInvalid = false)
+
   $: method = METHODS[methodName]
 
   let snackbar: Snackbar
