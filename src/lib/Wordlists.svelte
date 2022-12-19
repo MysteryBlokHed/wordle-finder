@@ -11,7 +11,7 @@
 
   let lists: Record<string, List> = {}
   let wordDate = new Date()
-  let today = new Date()
+  let today: Date
   let wordTime = `${wordDate.getHours()}:${wordDate
     .getMinutes()
     .toString()
@@ -19,13 +19,11 @@
   let wordTimeInvalid = false
   let pickerShown = false
 
-  setTimeout(
-    () =>
-      setInterval(() => {
-        today = new Date()
-      }, 1000),
-    1000 - today.getMilliseconds(),
-  )
+  const updateToday = () => {
+    today = new Date()
+    setTimeout(updateToday, 1000 - today.getMilliseconds())
+  }
+  updateToday()
 
   const timeRegex = /^(1?\d|2[0-3]):([0-5]\d)$/
 
