@@ -47,12 +47,8 @@ const METHODS = {
     // Made async in case the random function decides to never stop,
     // which happens occasionally
     method(date, list: List) {
-      console.log('Quordle method called for list', list)
-
       return new Promise((resolve, reject) => {
         if (list.words.length < 4) return reject()
-
-        console.log('Promise beginning')
         // Give up if this takes too long
         setTimeout(() => reject(), 5000)
 
@@ -87,7 +83,6 @@ const METHODS = {
         )
 
         resolve(answers.join(', '))
-        console.log('Promise resolved')
       })
     },
   },
