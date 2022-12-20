@@ -60,20 +60,20 @@
       throw new TypeError('Method must require list to require word')
     }
 
-    if (!chosenList) {
-      chosenListInvalid = true
-      snackbarLabel = 'A list must be selected for this method'
-      snackbar.open()
-      throw new TypeError(
-        `A list must be selected for the method ${methodName}`,
-      )
-    } else {
-      chosenListInvalid = false
-    }
-
     let list: readonly string[] = []
 
     if (method.requiresList) {
+      if (!chosenList) {
+        chosenListInvalid = true
+        snackbarLabel = 'A list must be selected for this method'
+        snackbar.open()
+        throw new TypeError(
+          `A list must be selected for the method ${methodName}`,
+        )
+      } else {
+        chosenListInvalid = false
+      }
+
       if (chosenList === 'Custom') {
         // Custom list being used
         // Parse list and ensure it's an array
