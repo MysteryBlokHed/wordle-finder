@@ -8,6 +8,7 @@
   import { DatePicker } from 'date-picker-svelte'
 
   import METHODS, { type Method } from '../index-methods'
+  import PRESET_LISTS, { type PresetList } from '../lists'
   import { lists as listsStore } from '../stores'
   import { LIST_TIMEZONES } from '../types'
   import type { ListTimezone, IndexMethod } from '../types'
@@ -19,16 +20,19 @@
   let method: IndexMethod = METHODS[methodName]
   let newName = ''
   let newTimezone: ListTimezone = 'UTC'
-  let newList = ''
+  let chosenList: PresetList | 'Custom' | ''
+  let customList = ''
   let knownWord = ''
   let newDate = new Date()
 
   let newNameInvalid = false
-  let newListInvalid = false
+  let chosenListInvalid = false
+  let customListInvalid = false
   let knownWordInvalid = false
 
   $: newName, (newNameInvalid = false)
-  $: newList, (newListInvalid = false)
+  $: chosenList, (chosenListInvalid = false)
+  $: customList, (customListInvalid = false)
   $: knownWord, (knownWordInvalid = false)
 
   $: method = METHODS[methodName]
@@ -56,31 +60,52 @@
       throw new TypeError('Method must require list to require word')
     }
 
-    // Parse list and ensure it's an array
-    let listParsed: string[]
+    if (!chosenList) {
+      chosenListInvalid = true
+      snackbarLabel = 'A list must be selected for this method'
+      snackbar.open()
+      throw new TypeError(
+        `A list must be selected for the method ${methodName}`,
+      )
+    } else {
+      chosenListInvalid = false
+    }
+
+    let list: readonly string[] = []
+
     if (method.requiresList) {
-      try {
-        listParsed = JSON.parse(newList.replaceAll("'", '"'))
+      if (chosenList === 'Custom') {
+        // Custom list being used
+        // Parse list and ensure it's an array
+        let listParsed: readonly string[]
+        try {
+          listParsed = JSON.parse(customList.replaceAll("'", '"'))
 
-        if (typeof listParsed === 'string')
-          listParsed = (listParsed as string).split(' ')
+          if (typeof listParsed === 'string')
+            listParsed = (listParsed as string).split(' ')
 
-        const array = Array.isArray(listParsed)
-        if (!array || (array && !listParsed.length))
+          const array = Array.isArray(listParsed)
+          if (!array || (array && !listParsed.length))
+            throw new TypeError('Invalid list provided')
+        } catch {
+          customListInvalid = true
+          snackbarLabel = 'Invalid list provided'
+          snackbar.open()
           throw new TypeError('Invalid list provided')
-      } catch {
-        newListInvalid = true
-        snackbarLabel = 'Invalid list provided'
-        snackbar.open()
-        throw new TypeError('Invalid list provided')
+        }
+        customListInvalid = false
+
+        list = listParsed
+      } else {
+        // Preset list being used
+        list = PRESET_LISTS[chosenList]
       }
-      newListInvalid = false
     }
 
     let offset = -1
 
     if (method.requiresWord) {
-      const wordIndex = listParsed.findIndex(
+      const wordIndex = list.findIndex(
         word => word.toLowerCase() === knownWord.toLowerCase(),
       )
 
@@ -113,7 +138,7 @@
     listsStore.update(lists => ({
       ...lists,
       [newName]: {
-        words: listParsed,
+        words: list,
         offset: offset,
         method: methodName,
         timezone: newTimezone,
@@ -125,7 +150,8 @@
     methodName = 'Normal'
     newName = ''
     newTimezone = 'UTC'
-    newList = ''
+    chosenList = ''
+    customList = ''
     knownWord = ''
     newDate = new Date()
   }
@@ -177,11 +203,24 @@
 
   {#if method.requiresList}
     <br />
-    <Textfield
-      bind:value={newList}
-      bind:invalid={newListInvalid}
-      label="Wordlist (Raw JS Array)"
-    />
+    <Select
+      bind:value={chosenList}
+      bind:invalid={chosenListInvalid}
+      label="Wordlist"
+    >
+      {#each Object.keys(PRESET_LISTS) as list}
+        <Option value={list}>{list}</Option>
+      {/each}
+      <Option value="Custom">Custom</Option>
+    </Select>
+    {#if chosenList === 'Custom'}
+      <br />
+      <Textfield
+        bind:value={customList}
+        bind:invalid={customListInvalid}
+        label="Wordlist (Raw Array/String)"
+      />
+    {/if}
   {/if}
 
   {#if method.requiresWord}

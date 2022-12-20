@@ -6,7 +6,7 @@ export type ListTimezone = typeof LIST_TIMEZONES[number]
 
 export interface List {
   /** The wordlist itself */
-  words: string[]
+  words: readonly string[]
   /** The offset in days since the epoch to map the current day to an array index */
   offset: number
   /** The name of the method used to find the word index */
