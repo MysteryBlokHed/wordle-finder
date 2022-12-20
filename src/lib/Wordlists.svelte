@@ -7,7 +7,7 @@
   import METHODS from '../index-methods'
 
   import { lists as listsStore } from '../stores'
-  import type { List, ListTimezone } from '../types'
+  import type { IndexMethod, List, ListTimezone } from '../types'
 
   let lists: Record<string, List> = {}
   let wordDate = new Date()
@@ -54,17 +54,25 @@
   listsStore.subscribe(value => (lists = value))
 
   const findCurrentWord = async (date: Date, list: List): Promise<string> => {
-    if (!(list.method in METHODS))
-      throw new TypeError(`Unknown method ${list.method} specified`)
+    if (!(list.method in METHODS)) {
+      console.error(TypeError(`Unknown method ${list.method} specified`))
+      return 'Not Found'
+    }
 
-    const indexOrWord = await METHODS[list.method].method(date, list)
-    if (indexOrWord === null) return 'Not Found'
+    let indexOrWord: string | number | null
+
+    try {
+      indexOrWord = await METHODS[list.method].method(date, list)
+      if (indexOrWord === null) return 'Not Found'
+    } catch {
+      return 'Not Found'
+    }
 
     if (typeof indexOrWord === 'number') {
       if (!(indexOrWord in list.words)) return 'Not Found'
       return list.words[indexOrWord].toUpperCase()
     } else {
-      return indexOrWord
+      return indexOrWord!.toUpperCase()
     }
   }
 
@@ -91,9 +99,7 @@
       // Make sure options are in alphabetical order
       .sort(([a], [b]) => (a > b ? 1 : -1))
       .forEach(async ([name, list], i) => {
-        const word = await findCurrentWord(wordDate, list).then(word =>
-          word.toUpperCase(),
-        )
+        const word = await findCurrentWord(wordDate, list)
         options[i] = { name, word, timezone: list.timezone }
       })
   }

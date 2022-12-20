@@ -62,8 +62,11 @@
       try {
         listParsed = JSON.parse(newList.replaceAll("'", '"'))
 
-        if (!Array.isArray(listParsed))
+        if (typeof listParsed === 'string') listParsed = listParsed.split(' ')
+
+        if (!Array.isArray(listParsed)) {
           throw new TypeError('Invalid list provided')
+        }
       } catch {
         newListInvalid = true
         snackbarLabel = 'Invalid list provided'

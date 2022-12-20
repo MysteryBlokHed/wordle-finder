@@ -41,11 +41,13 @@
       something like
       <code>["FLAME", "BRICK", "SHUNT"]</code>
       or
-      <code>['trace', 'chart', 'adieu']</code>
+      <code>'trace salet adieu'</code>
       in a file called
       <code>app.js</code>
       or
-      <code>bundle.js</code>
+      <code>bundle.js.</code>
+      If your list is formatted as series of space-separated words, make sure to
+      include the quotes.
     </p>
     <p>
       The original Wordle doesn't require a wordlist to be provided due to its
