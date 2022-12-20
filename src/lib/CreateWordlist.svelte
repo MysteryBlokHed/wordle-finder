@@ -33,7 +33,7 @@
 
   $: method = METHODS[methodName]
 
-  let snackbar: Snackbar
+  let snackbar: Snackbar & { open: any }
   let snackbarLabel: string
 
   const maxDate = new Date()
@@ -57,16 +57,17 @@
     }
 
     // Parse list and ensure it's an array
-    let listParsed: string[] = []
+    let listParsed: string[]
     if (method.requiresList) {
       try {
         listParsed = JSON.parse(newList.replaceAll("'", '"'))
 
-        if (typeof listParsed === 'string') listParsed = listParsed.split(' ')
+        if (typeof listParsed === 'string')
+          listParsed = (listParsed as string).split(' ')
 
-        if (!Array.isArray(listParsed)) {
+        const array = Array.isArray(listParsed)
+        if (!array || (array && !listParsed.length))
           throw new TypeError('Invalid list provided')
-        }
       } catch {
         newListInvalid = true
         snackbarLabel = 'Invalid list provided'
@@ -100,6 +101,7 @@
 
     switch (methodName) {
       case 'Wordle':
+      case 'Quordle':
         newTimezone = 'Local'
         break
       case 'Louan':
