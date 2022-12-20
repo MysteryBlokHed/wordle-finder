@@ -61,8 +61,8 @@
     if (indexOrWord === null) return 'Not Found'
 
     if (typeof indexOrWord === 'number') {
-      if (!(indexOrWord in list.list)) return 'Not Found'
-      return list.list[indexOrWord].toUpperCase()
+      if (!(indexOrWord in list.words)) return 'Not Found'
+      return list.words[indexOrWord].toUpperCase()
     } else {
       return indexOrWord
     }

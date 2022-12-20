@@ -49,7 +49,7 @@ const METHODS = {
         date.getUTCMonth() + 1
       }-${date.getUTCDate()}`
       const random = seedrandom(formattedDate)()
-      const index = Math.floor(random * (list.list.indexOf('PIZZA') + 1))
+      const index = Math.floor(random * (list.words.indexOf('PIZZA') + 1))
 
       return index
     },

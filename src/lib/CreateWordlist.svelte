@@ -108,7 +108,7 @@
     listsStore.update(lists => ({
       ...lists,
       [newName]: {
-        list: listParsed,
+        words: listParsed,
         offset: offset,
         method: methodName,
         timezone: newTimezone,
