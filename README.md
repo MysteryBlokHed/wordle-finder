@@ -2,8 +2,7 @@
 
 <https://wordle.adamts.me>
 
-A site allowing you to add generic wordlists for Wordle-like games
-and find the solution for a given date.
+A site to add generic wordlists for Wordle-like games and find solutions for a given date.
 
 ## Use
 
@@ -32,6 +31,5 @@ yarn build
 
 ## License
 
-Wordle Finder and all its components are licensed
-under the GNU Affero General Public License, Version 3.0
+This project is licensed under the GNU Affero General Public License, Version 3.0
 ([LICENSE](LICENSE) or <https://www.gnu.org/licenses/agpl-3.0.en.html>).
