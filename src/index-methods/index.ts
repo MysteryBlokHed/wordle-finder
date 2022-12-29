@@ -15,9 +15,10 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
+import MersenneTwister from 'mersenne-twister'
 import seedrandom from 'seedrandom'
 
-import QuordleRand, { quordleBlacklist, octordleBlacklist } from './quordle'
+import { quordleBlacklist, octordleBlacklist } from './quordle'
 import type { List, IndexMethod } from '../types'
 
 const METHODS = {
@@ -79,7 +80,7 @@ const METHODS = {
             8.64e7) >>
           0
 
-        const rand = new QuordleRand(seed)
+        const rand = new MersenneTwister(seed)
         for (let i = 0; i < 4; i++) rand.random_int31()
 
         let answers: [string, string, string, string]
@@ -149,7 +150,7 @@ const METHODS = {
           const v1Seed =
             seed >= 160 ? seed * 8888 : seed >= 131 ? seed + 8888 : seed
 
-          const rand = new QuordleRand(v1Seed)
+          const rand = new MersenneTwister(v1Seed)
           for (let i = 0; i < 8; i++) rand.random_int31()
 
           // Get new answers until they are all unique and none of them are in the blacklist
