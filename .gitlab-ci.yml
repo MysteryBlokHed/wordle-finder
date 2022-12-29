@@ -17,8 +17,9 @@ cache:
 .changes: &changes
   - src/**/*
   - package.json
-  - tsconfig.json
-  - rollup.config.js
+  - tsconfig*.json
+  - vite.config.ts
+  - yarn.lock
   - .gitlab-ci.yml
   - .prettier*
 
