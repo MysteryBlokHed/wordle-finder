@@ -2,7 +2,7 @@
   import Button, { Icon, Label } from '@smui/button'
 
   import Wordlists from './lib/Wordlists.svelte'
-  import CreateWordlist from './lib/CreateWordlist.svelte'
+  import AddWordlist from './lib/AddWordlist.svelte'
   import HelpModal from './lib/HelpModal.svelte'
 </script>
 
@@ -12,7 +12,7 @@
   <Wordlists />
   <br />
   <br />
-  <CreateWordlist />
+  <AddWordlist />
   <br />
   <HelpModal />
   <br />
