@@ -6,7 +6,7 @@
  * but I couldn't find anything like it while searching online
  */
 
-/** A partial version of the random class used by Quordle */
+/** A partial version of the random class used by Quordle (and Octordle). */
 export default class OS {
   N: number
   M: number
@@ -216,4 +216,41 @@ export const quordleBlacklist = new Set([
   'WITCH',
   'WOODY',
   'ZONAL',
+])
+
+export const octordleBlacklist = new Set([
+  'SHOOT',
+  'DUMMY',
+  'PANSY',
+  'BOOBY',
+  'ENEMA',
+  'HAREM',
+  'HORNY',
+  'HUSSY',
+  'HYMEN',
+  'IDIOT',
+  'KINKY',
+  'LYNCH',
+  'MORON',
+  'PIXIE',
+  'PRICK',
+  'PUBIC',
+  'QUEER',
+  'RANDY',
+  'SEMEN',
+  'SISSY',
+  'SLANT',
+  'SLAVE',
+  'SPANK',
+  'SPERM',
+  'SPUNK',
+  'TRAMP',
+  'URINE',
+  'VOMIT',
+  'WILLY',
+  'GYPSY',
+  'GIPSY',
+  'MAMMY',
+  'WELCH',
+  'NOOSE',
 ])

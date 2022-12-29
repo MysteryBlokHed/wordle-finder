@@ -127,6 +127,7 @@
     switch (methodName) {
       case 'Wordle':
       case 'Quordle':
+      case 'Octordle':
         newTimezone = 'Local'
         break
       case 'Louan':

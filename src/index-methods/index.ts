@@ -1,6 +1,6 @@
 import seedrandom from 'seedrandom'
 
-import QuordleRand, { quordleBlacklist } from './quordle'
+import QuordleRand, { quordleBlacklist, octordleBlacklist } from './quordle'
 import type { List, IndexMethod } from '../types'
 
 const METHODS = {
@@ -81,6 +81,123 @@ const METHODS = {
           // No answers blacklisted
           answers.some(answer => quordleBlacklist.has(answer))
         )
+
+        resolve(answers.join(', '))
+      })
+    },
+  },
+
+  Octordle: {
+    requiresTimezone: false,
+    requiresWord: false,
+    requiresList: true,
+    external: false,
+
+    // Made async in case the v1 random function decides to never stop,
+    // which happens occasionally
+    method(date, list: List) {
+      return new Promise((resolve, reject) => {
+        if (list.words.length < 8) return reject()
+        // Give up if this takes too long
+        setTimeout(() => reject(), 5000)
+
+        const someDate = new Date('01/24/2022')
+        const someDateUTC = Date.UTC(
+          someDate.getFullYear(),
+          someDate.getMonth(),
+          someDate.getDate(),
+        )
+        const dateUTC = Date.UTC(
+          date.getFullYear(),
+          date.getMonth(),
+          date.getDate(),
+        )
+
+        const seed = Math.floor((dateUTC - someDateUTC) / 8.64e7)
+        const mode = seed >= 178 ? 'v2' : 'v1'
+
+        let answers: [
+          string,
+          string,
+          string,
+          string,
+          string,
+          string,
+          string,
+          string,
+        ]
+
+        if (mode === 'v1') {
+          // Quordle-like, uses seeded RNG
+          const v1Seed =
+            seed >= 160 ? seed * 8888 : seed >= 131 ? seed + 8888 : seed
+
+          const rand = new QuordleRand(v1Seed)
+          for (let i = 0; i < 8; i++) rand.random_int31()
+
+          // Get new answers until they are all unique and none of them are in the blacklist
+          do {
+            answers = [
+              rand.random_int31() % list.words.length,
+              rand.random_int31() % list.words.length,
+              rand.random_int31() % list.words.length,
+              rand.random_int31() % list.words.length,
+              rand.random_int31() % list.words.length,
+              rand.random_int31() % list.words.length,
+              rand.random_int31() % list.words.length,
+              rand.random_int31() % list.words.length,
+            ].map(index => list.words[index]) as any
+          } while (
+            // Answers are unique
+            answers.length !== new Set(answers).size ||
+            // No answers blacklisted
+            answers.some(answer => quordleBlacklist.has(answer))
+          )
+        } else {
+          // New, featuring a bunch of stuff to make it harder to reverse engineer
+          // ...but not quite enough ;)
+          let v2Seed = Math.floor((seed + 98741) / 137)
+
+          // Scramble wordbank
+          const scrambledWords = [...list.words]
+
+          let len = scrambledWords.length
+          let word: string
+          let index: number
+
+          while (len) {
+            let sinSeed = Math.sin(v2Seed) * 10_000
+            sinSeed = sinSeed - Math.floor(sinSeed)
+
+            index = Math.floor(sinSeed * len--)
+            word = scrambledWords[len]
+            scrambledWords[len] = scrambledWords[index]
+            scrambledWords[index] = word
+            ++v2Seed
+          }
+
+          // Select answers
+          let offset = ((seed + 98741) * 137) % scrambledWords.length
+
+          // Get new answers until they are all unique and none of them are in the blacklist
+          do {
+            answers = [
+              scrambledWords[offset++ % scrambledWords.length],
+              scrambledWords[offset++ % scrambledWords.length],
+              scrambledWords[offset++ % scrambledWords.length],
+              scrambledWords[offset++ % scrambledWords.length],
+              scrambledWords[offset++ % scrambledWords.length],
+              scrambledWords[offset++ % scrambledWords.length],
+              scrambledWords[offset++ % scrambledWords.length],
+              scrambledWords[offset++ % scrambledWords.length],
+            ]
+          } while (
+            // Answers are unique
+            answers.length !== new Set(answers).size ||
+            // No answers blacklisted
+            answers.some(answer => octordleBlacklist.has(answer))
+          )
+        }
 
         resolve(answers.join(', '))
       })
