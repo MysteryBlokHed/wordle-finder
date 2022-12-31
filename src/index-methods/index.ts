@@ -51,7 +51,7 @@ const METHODS = {
         `https://cors-proxy.mysteryblokhed.workers.dev/https:%2F%2Fwww.nytimes.com/svc/wordle/v2/${formattedDate}.json`,
       )
         .then(r => r.json())
-        .then(json => json.solution)
+        .then(json => (json as { solution: string }).solution)
         .catch(() => null)
     },
   },
@@ -92,7 +92,7 @@ const METHODS = {
             rand.random_int31() % list.words.length,
             rand.random_int31() % list.words.length,
             rand.random_int31() % list.words.length,
-          ].map(index => list.words[index]) as any
+          ].map(index => list.words[index]) as typeof answers
         } while (
           // Answers are unique
           answers.length !== new Set(answers).size ||
@@ -164,7 +164,7 @@ const METHODS = {
               rand.random_int31() % list.words.length,
               rand.random_int31() % list.words.length,
               rand.random_int31() % list.words.length,
-            ].map(index => list.words[index]) as any
+            ].map(index => list.words[index]) as typeof answers
           } while (
             // Answers are unique
             answers.length !== new Set(answers).size ||

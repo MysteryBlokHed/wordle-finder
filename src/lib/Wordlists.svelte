@@ -24,7 +24,9 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
   import METHODS from '../index-methods'
 
   import { lists as listsStore } from '../stores'
-  import type { IndexMethod, List, ListTimezone } from '../types'
+  import type { List, ListTimezone } from '../types'
+
+  /* eslint-disable @typescript-eslint/no-unsafe-argument */
 
   let lists: Record<string, List> = {}
   let wordDate = new Date()
@@ -89,7 +91,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
       if (!(indexOrWord in list.words)) return 'Not Found'
       return list.words[indexOrWord].toUpperCase()
     } else {
-      return indexOrWord!.toUpperCase()
+      return indexOrWord.toUpperCase()
     }
   }
 
@@ -115,6 +117,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
     Object.entries(lists)
       // Make sure options are in alphabetical order
       .sort(([a], [b]) => (a > b ? 1 : -1))
+      // eslint-disable-next-line @typescript-eslint/no-misused-promises
       .forEach(async ([name, list], i) => {
         const word = await findCurrentWord(wordDate, list)
         options[i] = { name, word, timezone: list.timezone }

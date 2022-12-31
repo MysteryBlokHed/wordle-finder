@@ -36,7 +36,7 @@ yarn_install:
 lint:
   stage: lint
   script:
-    - yarn --frozen-lockfile --check-files --non-interactive --cache-folder .yarn-cache lint --check
+    - yarn --frozen-lockfile --check-files --non-interactive --cache-folder .yarn-cache lint
   rules:
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
       changes: *changes

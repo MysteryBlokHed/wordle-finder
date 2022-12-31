@@ -32,6 +32,8 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
   import '../theme/snackbar.scss'
 
+  /* eslint-disable @typescript-eslint/no-unsafe-call */
+
   let creating = false
   let methodName: Method = 'Normal'
   let method: IndexMethod = METHODS[methodName]
@@ -54,6 +56,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
   $: method = METHODS[methodName]
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let snackbar: Snackbar & { open: any }
   let snackbarLabel: string
 
@@ -94,16 +97,19 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
       if (chosenList === 'Custom') {
         // Custom list being used
         // Parse list and ensure it's an array
-        let listParsed: readonly string[]
+        let listParsed: string | readonly string[]
         try {
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
           listParsed = JSON.parse(customList.replaceAll("'", '"'))
 
-          if (typeof listParsed === 'string')
-            listParsed = (listParsed as string).split(' ')
+          if (typeof listParsed === 'string') {
+            listParsed = listParsed.split(' ')
+          }
 
           const array = Array.isArray(listParsed)
-          if (!array || (array && !listParsed.length))
+          if (!array || (array && !listParsed.length)) {
             throw new TypeError('Invalid list provided')
+          }
         } catch {
           customListInvalid = true
           snackbarLabel = 'Invalid list provided'
