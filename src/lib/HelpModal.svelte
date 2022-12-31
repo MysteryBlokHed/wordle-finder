@@ -40,15 +40,20 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
     </p>
     <p>The original Wordle has a method included in the dropdown.</p>
     <p>
-      Another site that has its method included is a French wordle clone, <a
-        href="https://wordle.louan.me/"
-        target="_blank"
-        rel="noreferrer"
-      >
-        wordle.louan.me.
+      Another site that has its method included is
+      <a href="https://www.quordle.com" target="_blank" rel="noreferrer">
+        Quordle.
       </a>
-      If you're adding this site's wordlist, simply select its method name from the
+      ) If you're adding Quordle's wordlist, simply select its method name from the
       dropdown box before saving.
+    </p>
+
+    <h2>Known wordlists</h2>
+    <p>
+      Wordlists for a few websites are already included and can be selected from
+      the "Wordlist" dropdown box. If the wordlist you're looking for isn't
+      included, select "Custom" from the dropdown and paste the list into the
+      provided text box.
     </p>
 
     <h2>Finding a wordlist</h2>
