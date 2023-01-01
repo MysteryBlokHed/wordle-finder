@@ -18,7 +18,13 @@
 import MersenneTwister from 'mersenne-twister'
 import seedrandom from 'seedrandom'
 
-import { quordleBlacklist, octordleBlacklist } from './quordle'
+import {
+  v1Method,
+  v2Method,
+  octordleSeed,
+  quordleBlacklist,
+  octordleBlacklist,
+} from './quordle'
 import type { List, IndexMethod } from '../types'
 
 const METHODS = {
@@ -82,25 +88,7 @@ const METHODS = {
             8.64e7) >>
           0
 
-        const rand = new MersenneTwister(seed)
-        for (let i = 0; i < 4; i++) rand.random_int31()
-
-        let answers: [string, string, string, string]
-
-        // Get new answers until they are all unique and none of them are in the blacklist
-        do {
-          answers = [
-            rand.random_int31() % list.words.length,
-            rand.random_int31() % list.words.length,
-            rand.random_int31() % list.words.length,
-            rand.random_int31() % list.words.length,
-          ].map(index => list.words[index]) as typeof answers
-        } while (
-          // Answers are unique
-          answers.length !== new Set(answers).size ||
-          // No answers blacklisted
-          answers.some(answer => quordleBlacklist.has(answer))
-        )
+        const answers = v1Method(seed, 4, list.words, quordleBlacklist)
 
         resolve(answers.join(', '))
       })
@@ -121,19 +109,7 @@ const METHODS = {
         // Give up if this takes too long
         setTimeout(() => reject(), 5000)
 
-        const someDate = new Date('01/24/2022')
-        const someDateUTC = Date.UTC(
-          someDate.getFullYear(),
-          someDate.getMonth(),
-          someDate.getDate(),
-        )
-        const dateUTC = Date.UTC(
-          date.getFullYear(),
-          date.getMonth(),
-          date.getDate(),
-        )
-
-        const seed = Math.floor((dateUTC - someDateUTC) / 8.64e7)
+        const seed = octordleSeed(date)
         const mode = seed >= 178 ? 'v2' : 'v1'
 
         let answers: [
@@ -148,75 +124,23 @@ const METHODS = {
         ]
 
         if (mode === 'v1') {
-          // Quordle-like, uses seeded RNG
           const v1Seed =
             seed >= 160 ? seed * 8888 : seed >= 131 ? seed + 8888 : seed
 
-          const rand = new MersenneTwister(v1Seed)
-          for (let i = 0; i < 8; i++) rand.random_int31()
-
-          // Get new answers until they are all unique and none of them are in the blacklist
-          do {
-            answers = [
-              rand.random_int31() % list.words.length,
-              rand.random_int31() % list.words.length,
-              rand.random_int31() % list.words.length,
-              rand.random_int31() % list.words.length,
-              rand.random_int31() % list.words.length,
-              rand.random_int31() % list.words.length,
-              rand.random_int31() % list.words.length,
-              rand.random_int31() % list.words.length,
-            ].map(index => list.words[index]) as typeof answers
-          } while (
-            // Answers are unique
-            answers.length !== new Set(answers).size ||
-            // No answers blacklisted
-            answers.some(answer => quordleBlacklist.has(answer))
-          )
+          answers = v1Method(
+            v1Seed,
+            8,
+            list.words,
+            octordleBlacklist,
+          ) as typeof answers
         } else {
-          // New, featuring a bunch of stuff to make it harder to reverse engineer
-          // ...but not quite enough ;)
-          let v2Seed = Math.floor((seed + 98741) / 137)
-
-          // Scramble wordbank
-          const scrambledWords = [...list.words]
-
-          let len = scrambledWords.length
-          let word: string
-          let index: number
-
-          while (len) {
-            let sinSeed = Math.sin(v2Seed) * 10_000
-            sinSeed = sinSeed - Math.floor(sinSeed)
-
-            index = Math.floor(sinSeed * len--)
-            word = scrambledWords[len]
-            scrambledWords[len] = scrambledWords[index]
-            scrambledWords[index] = word
-            ++v2Seed
-          }
-
-          // Select answers
-          let offset = ((seed + 98741) * 137) % scrambledWords.length
-
-          // Get new answers until they are all unique and none of them are in the blacklist
-          do {
-            answers = [
-              scrambledWords[offset++ % scrambledWords.length],
-              scrambledWords[offset++ % scrambledWords.length],
-              scrambledWords[offset++ % scrambledWords.length],
-              scrambledWords[offset++ % scrambledWords.length],
-              scrambledWords[offset++ % scrambledWords.length],
-              scrambledWords[offset++ % scrambledWords.length],
-              scrambledWords[offset++ % scrambledWords.length],
-              scrambledWords[offset++ % scrambledWords.length],
-            ]
-          } while (
-            // Answers are unique
-            answers.length !== new Set(answers).size ||
-            // No answers blacklisted
-            answers.some(answer => octordleBlacklist.has(answer))
-          )
+          answers = v2Method(
+            seed + 98741,
+            137,
+            8,
+            list.words,
+            octordleBlacklist,
+          ) as typeof answers
         }
 
         resolve(answers.join(', '))
