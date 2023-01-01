@@ -43,15 +43,17 @@ const METHODS = {
 
     method(date) {
       // Wordle uses the local timezone, not UTC
-      const formattedDate = `${date.getFullYear()}-${
-        date.getMonth() + 1
-      }-${date.getDate()}`
+      const year = date.getFullYear()
+      const month = (date.getMonth() + 1).toString().padStart(2, '0')
+      const day = date.getDate().toString().padStart(2, '0')
+
+      const formattedDate = `${year}-${month}-${day}`
 
       return fetch(
         `https://cors-proxy.mysteryblokhed.workers.dev/https:%2F%2Fwww.nytimes.com/svc/wordle/v2/${formattedDate}.json`,
       )
-        .then(r => r.json())
-        .then(json => (json as { solution: string }).solution)
+        .then<{ solution?: string }>(r => r.json())
+        .then(json => json.solution ?? null)
         .catch(() => null)
     },
   },
