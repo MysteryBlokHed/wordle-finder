@@ -39,7 +39,7 @@ export function v1Method(
 
   // Get new answers until they are all unique and none of them are in the blacklist
   do {
-    let indices: number[] = []
+    const indices: number[] = []
     for (let i = 0; i < wordCount; i++) {
       indices.push(rand.random_int31() % totalWords)
     }
@@ -98,7 +98,7 @@ export function v2Method(
 
   // Get new answers until they are all unique and none of them are in the blacklist
   do {
-    let indices: number[] = []
+    const indices: number[] = []
     for (let i = 0; i < wordCount; i++) {
       indices.push(offset++ % len)
     }
