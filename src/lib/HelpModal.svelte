@@ -44,7 +44,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
       <a href="https://www.quordle.com" target="_blank" rel="noreferrer">
         Quordle.
       </a>
-      ) If you're adding Quordle's wordlist, simply select its method name from the
+      If you're adding Quordle's wordlist, simply select its method name from the
       dropdown box before saving.
     </p>
 
