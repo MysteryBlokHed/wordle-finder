@@ -101,50 +101,96 @@ const METHODS = {
     requiresList: true,
     external: false,
 
-    // Made async in case the v1 random function decides to never stop,
-    // which happens occasionally
     method(date, list: List) {
-      return new Promise((resolve, reject) => {
-        if (list.words.length < 8) return reject()
-        // Give up if this takes too long
-        setTimeout(() => reject(), 5000)
+      if (list.words.length < 8) return null
 
-        const seed = octordleSeed(date)
-        const mode = seed >= 178 ? 'v2' : 'v1'
+      const seed = octordleSeed(date)
+      const mode = seed >= 178 ? 'v2' : 'v1'
 
-        let answers: [
-          string,
-          string,
-          string,
-          string,
-          string,
-          string,
-          string,
-          string,
-        ]
+      let answers: string[]
 
-        if (mode === 'v1') {
-          const v1Seed =
-            seed >= 160 ? seed * 8888 : seed >= 131 ? seed + 8888 : seed
+      if (mode === 'v1') {
+        const v1Seed =
+          seed >= 160 ? seed * 8888 : seed >= 131 ? seed + 8888 : seed
+        answers = v1Method(v1Seed, 8, list.words, octordleBlacklist)
+      } else {
+        answers = v2Method(seed + 98741, 137, 8, list.words, octordleBlacklist)
+      }
 
-          answers = v1Method(
-            v1Seed,
-            8,
-            list.words,
-            octordleBlacklist,
-          ) as typeof answers
-        } else {
-          answers = v2Method(
-            seed + 98741,
-            137,
-            8,
-            list.words,
-            octordleBlacklist,
-          ) as typeof answers
-        }
+      return answers.join(', ')
+    },
+  },
 
-        resolve(answers.join(', '))
-      })
+  'Octordle Sequence': {
+    requiresTimezone: false,
+    requiresWord: false,
+    requiresList: true,
+    external: false,
+
+    method(date, list: List) {
+      if (list.words.length < 8) return null
+
+      const seed = octordleSeed(date)
+      const mode = seed >= 178 ? 'v2' : 'v1'
+
+      let answers: string[]
+
+      if (mode === 'v1') {
+        const v1Seed = seed * 71104
+        answers = v1Method(v1Seed, 8, list.words, octordleBlacklist)
+      } else {
+        answers = v2Method(seed + 397814, 137, 8, list.words, octordleBlacklist)
+      }
+
+      return answers.join(', ')
+    },
+  },
+
+  'Octordle Rescue': {
+    requiresTimezone: false,
+    requiresWord: false,
+    requiresList: true,
+    external: false,
+
+    method(date, list: List) {
+      if (list.words.length < 8) return null
+
+      const seed = octordleSeed(date)
+      const answers = v2Method(
+        seed + 2030301,
+        137,
+        8,
+        list.words,
+        octordleBlacklist,
+      )
+
+      return answers.join(', ')
+    },
+  },
+
+  'Octordle Gold': {
+    requiresTimezone: false,
+    requiresWord: false,
+    requiresList: true,
+    external: false,
+
+    method(date, list: List) {
+      if (list.words.length < 8) return null
+
+      const seed = octordleSeed(date)
+      const mode = seed >= 178 ? 'v2' : 'v1'
+      console.log(seed)
+
+      let answers: string[]
+
+      if (mode === 'v1') {
+        const v1Seed = seed * 8888 + 8
+        answers = v1Method(v1Seed, 8, list.words, octordleBlacklist)
+      } else {
+        answers = v2Method(seed + 33271, 137, 8, list.words, octordleBlacklist)
+      }
+
+      return answers.join(', ')
     },
   },
 
