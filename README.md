@@ -29,6 +29,19 @@ To build for production, run:
 yarn build
 ```
 
+## Contrubuting
+
+### Adding builtin wordlists
+
+Builtin wordlists are compressed using lz-string to reduce bundle size.
+Here's how to compress and add a list:
+
+1. Save the wordlist to a file containing a JSON array (i.e. `['flame', 'brick']` -> `list.json`)
+2. Run the `compress-list` script (i.e. `yarn compress-list list.json`)
+3. Copy the outputted base 64
+4. Add an entry in `PRESET_LISTS` in `src/lists.ts`.  
+   It should look like `'My List Name': decompress('NoIgZgNghgtgpiANCARgJwJYGMDWIC6QA===')`
+
 ## License
 
 This project is licensed under the GNU Affero General Public License, Version 3.0

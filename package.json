@@ -13,6 +13,7 @@
     "lint": "yarn lint:prettier --check && yarn lint:eslint",
     "lint:prettier": "prettier \"**/*.{js,ts,svelte,json,md,yml}\"",
     "lint:eslint": "eslint src",
+    "compress-list": "node compress.js",
     "prepare": "yarn smui-theme-light && yarn smui-theme-dark",
     "smui-theme-light": "smui-theme compile smui/smui.css -i src/theme",
     "smui-theme-dark": "smui-theme compile smui/smui-dark.css -i src/theme/dark"
