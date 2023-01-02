@@ -151,6 +151,9 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
       case 'Wordle':
       case 'Quordle':
       case 'Octordle':
+      case 'Octordle Sequence':
+      case 'Octordle Rescue':
+      case 'Octordle Gold':
         newTimezone = 'Local'
         break
       case 'Louan':
