@@ -81,7 +81,9 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
     let indexOrWord: string | number | null
 
     try {
-      indexOrWord = await METHODS[list.method].method(date, list)
+      const method = METHODS[list.method]
+      const seed = method.seed(date, list)
+      indexOrWord = await method.method(seed, list)
       if (indexOrWord === null) return 'Not Found'
     } catch {
       return 'Not Found'

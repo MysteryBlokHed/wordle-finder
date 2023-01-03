@@ -34,11 +34,13 @@ const METHODS = {
     requiresList: true,
     external: false,
 
-    method(date, list: List) {
+    seed(date, list: List) {
       const tzOffset =
         list.timezone === 'UTC' ? 0 : date.getTimezoneOffset() * 60_000
       return Math.floor((date.getTime() - tzOffset) / 8.64e7) - list.offset
     },
+
+    method: seed => seed,
   },
 
   Wordle: {
@@ -47,8 +49,15 @@ const METHODS = {
     requiresList: false,
     external: true,
 
-    method(date) {
-      // Wordle uses the local timezone, not UTC
+    seed(date) {
+      const offsetDate = new Date('2021/06/19')
+      return Math.floor((date.getTime() - offsetDate.getTime()) / 8.64e7)
+    },
+
+    method(seed) {
+      const date = new Date('2021/06/19')
+      date.setDate(date.getDate() + seed)
+
       const year = date.getFullYear()
       const month = (date.getMonth() + 1).toString().padStart(2, '0')
       const day = date.getDate().toString().padStart(2, '0')
@@ -70,28 +79,23 @@ const METHODS = {
     requiresList: true,
     external: false,
 
-    // Made async in case the random function decides to never stop,
-    // which happens occasionally
-    method(date, list: List) {
-      return new Promise((resolve, reject) => {
-        if (list.words.length < 4) return reject()
-        // Give up if this takes too long
-        setTimeout(() => reject(), 5000)
+    seed(date) {
+      const offsetDate = new Date('2022/01/24')
+      const seed =
+        ((date.getTime() -
+          offsetDate.getTime() +
+          (offsetDate.getTimezoneOffset() - date.getTimezoneOffset()) *
+            60_000) /
+          8.64e7) >>
+        0
 
-        const someDate = new Date('01/24/2022')
+      return seed
+    },
 
-        const seed =
-          ((date.getTime() -
-            someDate.getTime() +
-            (someDate.getTimezoneOffset() - date.getTimezoneOffset()) *
-              60_000) /
-            8.64e7) >>
-          0
-
-        const answers = v1Method(seed, 4, list.words, quordleBlacklist)
-
-        resolve(answers.join(', '))
-      })
+    method(seed, list: List) {
+      if (list.words.length < 4) return null
+      const answers = v1Method(seed, 4, list.words, quordleBlacklist)
+      return answers.join(', ')
     },
   },
 
@@ -101,10 +105,11 @@ const METHODS = {
     requiresList: true,
     external: false,
 
-    method(date, list: List) {
+    seed: date => octordleSeed(date),
+
+    method(seed, list: List) {
       if (list.words.length < 8) return null
 
-      const seed = octordleSeed(date)
       const mode = seed >= 178 ? 'v2' : 'v1'
 
       let answers: string[]
@@ -127,10 +132,11 @@ const METHODS = {
     requiresList: true,
     external: false,
 
-    method(date, list: List) {
+    seed: date => octordleSeed(date),
+
+    method(seed, list: List) {
       if (list.words.length < 8) return null
 
-      const seed = octordleSeed(date)
       const mode = seed >= 178 ? 'v2' : 'v1'
 
       let answers: string[]
@@ -152,10 +158,11 @@ const METHODS = {
     requiresList: true,
     external: false,
 
-    method(date, list: List) {
+    seed: date => octordleSeed(date),
+
+    method(seed, list: List) {
       if (list.words.length < 8) return null
 
-      const seed = octordleSeed(date)
       const answers = v2Method(
         seed + 2030301,
         137,
@@ -174,10 +181,11 @@ const METHODS = {
     requiresList: true,
     external: false,
 
-    method(date, list: List) {
+    seed: date => octordleSeed(date),
+
+    method(seed, list: List) {
       if (list.words.length < 8) return null
 
-      const seed = octordleSeed(date)
       const mode = seed >= 178 ? 'v2' : 'v1'
       console.log(seed)
 
@@ -200,16 +208,15 @@ const METHODS = {
     requiresList: true,
     external: false,
 
-    method(date, list: List) {
-      // Louan uses UTC, not the local timezone
+    seed(date, list: List) {
       const formattedDate = `${date.getUTCFullYear()}-${
         date.getUTCMonth() + 1
       }-${date.getUTCDate()}`
       const random = seedrandom(formattedDate)()
-      const index = Math.floor(random * (list.words.indexOf('PIZZA') + 1))
-
-      return index
+      return Math.floor(random * (list.words.indexOf('PIZZA') + 1))
     },
+
+    method: seed => seed,
   },
 
   Xordle: {
@@ -218,11 +225,15 @@ const METHODS = {
     requiresList: false,
     external: false,
 
-    method(date) {
+    seed(date) {
+      const offsetDate = new Date('2022/04/01')
+      const seed = Math.floor((date.getTime() - offsetDate.getTime()) / 8.64e7)
+      return seed
+    },
+
+    method(seed) {
       // Xordle has its own method just because of the way its words are stored
       // (as pairs of answers instead of single string answers)
-      const someDate = new Date('April 01 2022')
-      const seed = Math.floor((date.getTime() - someDate.getTime()) / 8.64e7)
       const words = xordleWordlist[seed]
       return words.join(', ')
     },

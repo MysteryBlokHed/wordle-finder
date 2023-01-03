@@ -32,14 +32,41 @@ export interface List {
   timezone: ListTimezone
 }
 
+/** Describes a method used to find active words */
 export interface IndexMethod {
+  /** Whether the method requires a timezone */
   requiresTimezone: boolean
+  /** Whether the method requires an active word */
   requiresWord: boolean
+  /** Whether the method requries a wordlist */
   requiresList: boolean
+  /**
+   * Whether the method makes external requests.
+   * This doesn't change anything about how the method is called,
+   * but it displays a notice to the user about external requests.
+   */
   external: boolean
 
+  /**
+   * Generate a seed from a provided date
+   * @param date The date to derive the seed from
+   * @param list The list information from the wordlist's creation.
+   * Only passed if {@link IndexMethod.requiresList} is `true`
+   * @returns The seed to be passed to {@link IndexMethod.method}
+   */
+  seed(date: Date, list?: List): number
+
+  /**
+   * The method to get words. May be asynchronous
+   * @param seed The seed to use, either from {@link IndexMethod.seed}
+   * or provided by the user
+   * @param list The list information from the wordlist's creation.
+   * Only passed if {@link IndexMethod.requiresList} is `true`
+   * @returns Either the words as a string, an index in the wordlist to use,
+   * or null if no word could be found.
+   */
   method(
-    date: Date,
+    seed: number,
     list?: List,
   ): string | number | null | Promise<string | number | null>
 }
