@@ -42,6 +42,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
   let customSeed = ''
   let customSeedInvalid = false
   let validCustomSeed = -1
+  let validCustomSeedOnChange = -1
 
   const updateToday = () => {
     today = new Date()
@@ -76,7 +77,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
   const intRegex = /^[+-]?\d*$/
   $: (() => {
     if (!customSeed) {
-      validCustomSeed = -1
+      validCustomSeedOnChange = validCustomSeed = -1
       customSeedInvalid = false
       return
     }
@@ -92,6 +93,10 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
     validCustomSeed = parseInt(customSeed)
   })()
+
+  // Update validCustomSeedOnChange only when the onChange event of the custom seed box is fired
+  // (only happens when it has been blurred and a change has occurred)
+  const onCustomSeedChange = () => (validCustomSeedOnChange = validCustomSeed)
 
   const maxDate = new Date()
   maxDate.setFullYear(maxDate.getFullYear() + 10)
@@ -151,6 +156,15 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
       .sort(([a], [b]) => (a > b ? 1 : -1))
       // eslint-disable-next-line @typescript-eslint/no-misused-promises
       .forEach(async ([name, list], i) => {
+        // If the method makes external calls, wait until the custom seed box has been blurred
+        // before making another request to the website to avoid spamming requests
+        if (
+          METHODS[list.method].external &&
+          validCustomSeedOnChange !== validCustomSeed
+        ) {
+          return
+        }
+
         const word = await findCurrentWord(wordDate, list, validCustomSeed)
         options[i] = { name, word, timezone: list.timezone }
       })
@@ -219,6 +233,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
   <Textfield
     bind:value={customSeed}
     bind:invalid={customSeedInvalid}
+    on:change={onCustomSeedChange}
     label="Seed (i.e. Puzzle Number)"
   >
     <IconButton

@@ -42,8 +42,9 @@ export interface IndexMethod {
   requiresList: boolean
   /**
    * Whether the method makes external requests.
-   * This doesn't change anything about how the method is called,
-   * but it displays a notice to the user about external requests.
+   * This displays a notice to the user about external requests while they add the method.
+   * When a custom seed is provided, it also makes sure that the method isn't called
+   * until the custom seed box is blurred
    */
   external: boolean
 
