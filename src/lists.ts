@@ -17,7 +17,7 @@
  */
 import LZString from 'lz-string'
 
-const decompress = (data: string) =>
+export const decompress = (data: string) =>
   /* eslint-disable-next-line @typescript-eslint/no-non-null-assertion */
   JSON.parse(LZString.decompressFromBase64(data)!) as string[]
 
