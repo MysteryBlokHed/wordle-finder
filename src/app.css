@@ -79,6 +79,10 @@ button:focus-visible {
     --date-picker-foreground: black;
   }
 
+  body {
+    background-color: #ffffff;
+  }
+
   a:hover {
     color: #747bff;
   }
