@@ -18,6 +18,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 <script lang="ts">
   import Button, { Icon, Label } from '@smui/button'
   import Checkbox from '@smui/checkbox'
+  import IconButton from '@smui/icon-button'
   import DataTable, { Head, Body, Row, Cell } from '@smui/data-table'
   import Textfield from '@smui/textfield'
   import { DatePicker } from 'date-picker-svelte'
@@ -37,6 +38,10 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
     .padStart(2, '0')}`
   let wordTimeInvalid = false
   let pickerShown = false
+  let customSeedShown = false
+  let customSeed = ''
+  let customSeedInvalid = false
+  let validCustomSeed = -1
 
   const updateToday = () => {
     today = new Date()
@@ -44,8 +49,8 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
   }
   updateToday()
 
+  // Validate time field for date picker
   const timeRegex = /^(1?\d|2[0-3]):([0-5]\d)$/
-
   $: (() => {
     // Try to parse the provided time
     const match = wordTime.match(timeRegex)
@@ -67,12 +72,37 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
     wordDate = wordDate
   })()
 
+  // Validate custom seed
+  const intRegex = /^[+-]?\d*$/
+  $: (() => {
+    if (!customSeed) {
+      validCustomSeed = -1
+      customSeedInvalid = false
+      return
+    }
+
+    const valid = intRegex.test(customSeed)
+
+    if (!valid) {
+      customSeedInvalid = true
+      return
+    } else {
+      customSeedInvalid = false
+    }
+
+    validCustomSeed = parseInt(customSeed)
+  })()
+
   const maxDate = new Date()
   maxDate.setFullYear(maxDate.getFullYear() + 10)
 
   listsStore.subscribe(value => (lists = value))
 
-  const findCurrentWord = async (date: Date, list: List): Promise<string> => {
+  const findCurrentWord = async (
+    date: Date,
+    list: List,
+    overrideSeed: number,
+  ): Promise<string> => {
     if (!(list.method in METHODS)) {
       console.error(TypeError(`Unknown method ${list.method} specified`))
       return 'Not Found'
@@ -82,7 +112,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
     try {
       const method = METHODS[list.method]
-      const seed = method.seed(date, list)
+      const seed = overrideSeed !== -1 ? overrideSeed : method.seed(date, list)
       indexOrWord = await method.method(seed, list)
       if (indexOrWord === null) return 'Not Found'
     } catch {
@@ -121,7 +151,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
       .sort(([a], [b]) => (a > b ? 1 : -1))
       // eslint-disable-next-line @typescript-eslint/no-misused-promises
       .forEach(async ([name, list], i) => {
-        const word = await findCurrentWord(wordDate, list)
+        const word = await findCurrentWord(wordDate, list, validCustomSeed)
         options[i] = { name, word, timezone: list.timezone }
       })
   }
@@ -176,8 +206,35 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
     max={maxDate}
   />
 {/if}
+
 <br />
 <br />
+
+<Button on:click={() => (customSeedShown = !customSeedShown)} variant="raised">
+  <Label>Custom Seed</Label>
+  <Icon class="material-icons">numbers</Icon>
+</Button>
+{#if customSeedShown}
+  <h4 style="margin-bottom: 0;">This takes precedent over the date picker</h4>
+  <Textfield
+    bind:value={customSeed}
+    bind:invalid={customSeedInvalid}
+    label="Seed (i.e. Puzzle Number)"
+  >
+    <IconButton
+      on:click={() => (customSeed = '')}
+      class="material-icons"
+      slot="trailingIcon"
+      disabled={!customSeed}
+    >
+      delete
+    </IconButton>
+  </Textfield>
+{/if}
+
+<br />
+<br />
+
 <DataTable table$aria-label="List of wordlists">
   <Head>
     <Row>
@@ -209,6 +266,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
     {/each}
   </Body>
 </DataTable>
+
 {#if selected.length}
   <br />
   <Button on:click={deleteSelected} variant="raised" color="secondary">

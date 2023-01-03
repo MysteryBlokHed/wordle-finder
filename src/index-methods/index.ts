@@ -187,7 +187,6 @@ const METHODS = {
       if (list.words.length < 8) return null
 
       const mode = seed >= 178 ? 'v2' : 'v1'
-      console.log(seed)
 
       let answers: string[]
 
