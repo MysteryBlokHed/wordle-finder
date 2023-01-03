@@ -24,6 +24,7 @@ import {
   quordleBlacklist,
   octordleBlacklist,
 } from './quordle'
+import xordleWordlist from './xordle'
 import type { List, IndexMethod } from '../types'
 
 const METHODS = {
@@ -208,6 +209,22 @@ const METHODS = {
       const index = Math.floor(random * (list.words.indexOf('PIZZA') + 1))
 
       return index
+    },
+  },
+
+  Xordle: {
+    requiresTimezone: false,
+    requiresWord: false,
+    requiresList: false,
+    external: false,
+
+    method(date) {
+      // Xordle has its own method just because of the way its words are stored
+      // (as pairs of answers instead of single string answers)
+      const someDate = new Date('April 01 2022')
+      const seed = Math.floor((date.getTime() - someDate.getTime()) / 8.64e7)
+      const words = xordleWordlist[seed]
+      return words.join(', ')
     },
   },
 } as const satisfies Record<string, IndexMethod>

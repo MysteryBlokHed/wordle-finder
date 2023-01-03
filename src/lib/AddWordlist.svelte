@@ -157,6 +157,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
         newTimezone = 'Local'
         break
       case 'Louan':
+      case 'Xordle':
         newTimezone = 'UTC'
         break
     }
