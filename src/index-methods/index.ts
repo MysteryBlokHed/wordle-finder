@@ -24,7 +24,7 @@ import {
   quordleBlacklist,
   octordleBlacklist,
 } from './quordle'
-import xordleWordlist from './xordle'
+import xordle from './xordle'
 import type { List, IndexMethod } from '../types'
 
 const METHODS = {
@@ -230,12 +230,7 @@ const METHODS = {
       return seed
     },
 
-    method(seed) {
-      // Xordle has its own method just because of the way its words are stored
-      // (as pairs of answers instead of single string answers)
-      const words = xordleWordlist[seed]
-      return words.join(', ')
-    },
+    method: seed => xordle(seed).join(', '),
   },
 } as const satisfies Record<string, IndexMethod>
 
