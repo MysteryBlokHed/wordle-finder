@@ -27,8 +27,9 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
   import METHODS, { type Method } from '../index-methods'
   import PRESET_LISTS, { type PresetList } from '../lists'
   import { lists as listsStore } from '../stores'
+  import { numberExp, offsetToString } from '../offset-tz'
   import { LIST_TIMEZONES } from '../types'
-  import type { ListTimezone, IndexMethod } from '../types'
+  import type { IndexMethod, StoredTimezone } from '../types'
 
   import '../theme/snackbar.scss'
 
@@ -38,18 +39,21 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
   let methodName: Method = 'Normal'
   let method: IndexMethod = METHODS[methodName]
   let newName = ''
-  let newTimezone: ListTimezone = 'UTC'
+  let newTimezone: StoredTimezone | 'Offset' = 'UTC'
+  let newOffset = ''
   let chosenList: PresetList | 'Custom' | ''
   let customList = ''
   let knownWord = ''
   let newDate = new Date()
 
   let newNameInvalid = false
+  let newOffsetInvalid = false
   let chosenListInvalid = false
   let customListInvalid = false
   let knownWordInvalid = false
 
   $: newName, (newNameInvalid = false)
+  $: newOffset, (newOffsetInvalid = false)
   $: chosenList, (chosenListInvalid = false)
   $: customList, (customListInvalid = false)
   $: knownWord, (knownWordInvalid = false)
@@ -162,6 +166,20 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
         break
     }
 
+    if (newTimezone === 'Offset') {
+      if (!numberExp.test(newOffset)) {
+        newOffsetInvalid = true
+        snackbarLabel = 'Timezone offset is invalid'
+        snackbar.open()
+        throw new TypeError('Timezone offset is invalid')
+      } else {
+        newOffsetInvalid = false
+      }
+
+      const offset = parseInt(newOffset)
+      newTimezone = offsetToString(offset)
+    }
+
     // Update known lists
     listsStore.update(lists => ({
       ...lists,
@@ -169,7 +187,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
         words: list,
         offset: offset,
         method: methodName,
-        timezone: newTimezone,
+        timezone: newTimezone as StoredTimezone,
       },
     }))
 
@@ -178,6 +196,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
     methodName = 'Normal'
     newName = ''
     newTimezone = 'UTC'
+    newOffset = ''
     chosenList = ''
     customList = ''
     knownWord = ''
@@ -227,6 +246,14 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
         <Option value={timezone}>{timezone}</Option>
       {/each}
     </Select>
+    {#if newTimezone === 'Offset'}
+      <br />
+      <Textfield
+        bind:value={newOffset}
+        bind:invalid={newOffsetInvalid}
+        label="Offset (i.e. +2 or -5)"
+      />
+    {/if}
   {/if}
 
   {#if method.requiresList}

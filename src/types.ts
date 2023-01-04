@@ -16,10 +16,13 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 import type { Method } from './index-methods'
+import type { OffsetString } from './offset-tz'
 
-export const LIST_TIMEZONES = ['UTC', 'Local'] as const
+export const LIST_TIMEZONES = ['UTC', 'Local', 'Offset'] as const
 
 export type ListTimezone = typeof LIST_TIMEZONES[number]
+
+export type StoredTimezone = Exclude<ListTimezone, 'Offset'> | OffsetString
 
 export interface List {
   /** The wordlist itself */
@@ -29,7 +32,7 @@ export interface List {
   /** The name of the method used to find the word index */
   method: Method
   /** The timezone for the reset */
-  timezone: ListTimezone
+  timezone: StoredTimezone
 }
 
 /** Describes a method used to find active words */

@@ -23,9 +23,10 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
   import Textfield from '@smui/textfield'
   import { DatePicker } from 'date-picker-svelte'
   import METHODS from '../index-methods'
+  import { stringToOffset } from '../offset-tz'
 
   import { lists as listsStore } from '../stores'
-  import type { List, ListTimezone } from '../types'
+  import type { List, StoredTimezone } from '../types'
 
   /* eslint-disable @typescript-eslint/no-unsafe-argument */
 
@@ -132,7 +133,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
     }
   }
 
-  type Option = { name: string; word: string; timezone: ListTimezone }
+  type Option = { name: string; word: string; timezone: StoredTimezone }
 
   let options: Option[]
 
@@ -181,13 +182,26 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
     listsStore.set(lists)
   }
 
-  const nextWord = (timezone: ListTimezone, today: Date): string => {
+  const nextWord = (timezone: StoredTimezone, today: Date): string => {
     const tomorrow = new Date()
 
     if (timezone === 'Local') {
       tomorrow.setHours(24, 0, 0, 0)
-    } else {
+    } else if (timezone === 'UTC') {
       tomorrow.setUTCHours(24, 0, 0, 0)
+    } else {
+      // This may be far more complicated than necessary, but it's what I came up with around midnight
+      // Start at 00:00 local time tomorrow
+      tomorrow.setHours(24, 0, 0, 0)
+      // Get local and target offsets
+      const localOffset = tomorrow.getTimezoneOffset() / 60
+      const methodOffset = stringToOffset(timezone)
+
+      tomorrow.setHours(-localOffset - methodOffset)
+
+      // Ensure that negative times don't appear
+      const deltaMs = tomorrow.getTime() - today.getTime()
+      if (deltaMs < 0) tomorrow.setDate(tomorrow.getDate() + 1)
     }
 
     const deltaMs = tomorrow.getTime() - today.getTime()
