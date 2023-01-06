@@ -51,6 +51,7 @@ const METHODS = {
 
     seed(date) {
       const offsetDate = new Date('2021/06/19')
+      offsetDate.setHours(date.getHours(), 0, 0, 0)
       return Math.floor((date.getTime() - offsetDate.getTime()) / 8.64e7)
     },
 
