@@ -26,13 +26,13 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 <main>
   <h1 style="margin-bottom: 0;">Wordle Finder</h1>
   <h2>Find the current word for any given wordlist</h2>
+  <HelpModal />
+  <br />
+  <hr />
   <Wordlists />
   <br />
   <br />
   <AddWordlist />
-  <br />
-  <HelpModal />
-  <br />
   <br />
   <Button
     variant="raised"

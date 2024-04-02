@@ -28,7 +28,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
   aria-describedby="help-modal-content"
   surface$style="width: 500px; max-width: calc(100vw - 32px);"
 >
-  <Title id="help-modal-title">Help</Title>
+  <Title id="help-modal-title">How To Use</Title>
   <Content id="help-modal-content">
     <h2>Wordlist methods</h2>
     <p>
@@ -90,7 +90,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
 </Dialog>
 
 <Button variant="raised" on:click={() => (open = true)}>
-  <Label>Help</Label>
+  <Label>How To Use</Label>
   <Icon class="material-icons">help</Icon>
 </Button>
 
