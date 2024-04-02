@@ -40,7 +40,7 @@ Here's how to compress and add a list:
 
    ```jsonc
    // list.json
-   ["flame", "brick", /* etc */]
+   ["flame", "brick" /* etc */]
    ```
 
 2. Run the `compress-list` script
@@ -54,8 +54,8 @@ Here's how to compress and add a list:
 
    ```typescript
    const PRESET_LISTS = {
-      // ...
-      'Some List': decompress('NoIgZgNghgtgpiANCARgJwJYGMDWIC6QA==='),
+     // ...
+     'Some List': decompress('NoIgZgNghgtgpiANCARgJwJYGMDWIC6QA==='),
    }
    ```
 
