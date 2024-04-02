@@ -158,6 +158,7 @@ along with this program.  If not, see <https://www.gnu.org/licenses/>.
       case 'Octordle Sequence':
       case 'Octordle Rescue':
       case 'Octordle Gold':
+      case 'Contexto':
         newTimezone = 'Local'
         break
       case 'Louan':

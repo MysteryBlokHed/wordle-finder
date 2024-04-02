@@ -233,6 +233,38 @@ const METHODS = {
 
     method: seed => xordle(seed).join(', '),
   },
+
+  Contexto: {
+    requiresTimezone: false,
+    requiresWord: false,
+    requiresList: false,
+    external: true,
+
+    seed(date) {
+      const offsetDate = new Date('2022/09/18')
+      offsetDate.setHours(date.getHours(), 0, 0, 0)
+      return Math.floor((date.getTime() - offsetDate.getTime()) / 8.64e7)
+    },
+
+    async method(seed) {
+      const spanishSeed = seed - 250
+      const portugueseSeed = seed + 207
+
+      const getWord = (language: string, seed: number) =>
+        fetch(
+          `https://cors-proxy.mysteryblokhed.workers.dev/https:%2F%2Fapi.contexto.me/machado/${language}/giveup/${seed}`,
+        )
+          .then<{ word?: string }>(r => r.json())
+          .then(json => json.word ?? null)
+          .catch(() => null)
+
+      const english = (await getWord('en', seed)) || 'Not Found'
+      const spanish = (await getWord('es', spanishSeed)) || 'Not Found'
+      const portuguese = (await getWord('pt-br', portugueseSeed)) || 'Not Found'
+
+      return `EN: ${english}, ES: ${spanish}, PT: ${portuguese}`
+    },
+  },
 } as const satisfies Record<string, IndexMethod>
 
 export type Method = keyof typeof METHODS
